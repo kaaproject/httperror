@@ -1,3 +1,17 @@
+// Copyright 2019 KaaIoT Technologies, LLC
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+// 	http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package httperror
 
 import (
@@ -48,7 +62,7 @@ func TestNew(t *testing.T) {
 	}{
 		{name: "200", args: args{code: 200, format: "", a: nil}, want: &HTTPError{statusCode: 200, description: ""}},
 		{name: "404", args: args{code: 404, format: "no such page", a: nil}, want: &HTTPError{statusCode: 404, description: "no such page"}},
-		{name: "429", args: args{code: 429, format: "%v requests in last minute", a: a}, want: &HTTPError{statusCode: 429, description: "9000 requests in last minute"}},
+		{name: "429", args: args{code: 429, format: "over %v requests", a: a}, want: &HTTPError{statusCode: 429, description: "over 9000 requests"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
