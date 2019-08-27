@@ -59,13 +59,13 @@ func ReasonPhrase(err error) string {
 	return http.StatusText(StatusCode(err))
 }
 
-// WriteError writes to the response writer a status code and a JSON-encoded message based on the provided error.
+// Write to the response writer a status code and a JSON-encoded message based on the provided error.
 // The payload will look like:
 // {
 // 		"message": "error writing to DB"
 // }
-// WriteError does not otherwise end the request; the caller should ensure no further writes are done to w.
-func WriteError(w http.ResponseWriter, err error) {
+// Write does not otherwise end the request; the caller should ensure no further writes are done to w.
+func Write(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(StatusCode(err))
