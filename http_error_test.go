@@ -16,6 +16,7 @@ package httperror
 
 import (
 	"errors"
+	"net/http"
 	"reflect"
 	"testing"
 )
@@ -25,14 +26,16 @@ func TestHTTPError_Error(t *testing.T) {
 		statusCode  int
 		description string
 	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{name: "200", fields: fields{statusCode: 200, description: ""}, want: ""},
-		{name: "404", fields: fields{statusCode: 404, description: "no such page"}, want: "no such page"},
+		{name: "200", fields: fields{statusCode: http.StatusOK, description: ""}, want: ""},
+		{name: "404", fields: fields{statusCode: http.StatusNotFound, description: "no such page"}, want: "no such page"},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &HTTPError{
@@ -52,6 +55,7 @@ func TestNew(t *testing.T) {
 		format string
 		a      []interface{}
 	}
+
 	a := make([]interface{}, 1)
 	a[0] = 9000
 
@@ -60,9 +64,21 @@ func TestNew(t *testing.T) {
 		args args
 		want *HTTPError
 	}{
-		{name: "200", args: args{code: 200, format: "", a: nil}, want: &HTTPError{statusCode: 200, description: ""}},
-		{name: "404", args: args{code: 404, format: "no such page", a: nil}, want: &HTTPError{statusCode: 404, description: "no such page"}},
-		{name: "429", args: args{code: 429, format: "over %v requests", a: a}, want: &HTTPError{statusCode: 429, description: "over 9000 requests"}},
+		{
+			name: "200",
+			args: args{code: http.StatusOK, format: "", a: nil},
+			want: &HTTPError{statusCode: http.StatusOK, description: ""},
+		},
+		{
+			name: "404",
+			args: args{code: http.StatusNotFound, format: "no such page", a: nil},
+			want: &HTTPError{statusCode: http.StatusNotFound, description: "no such page"},
+		},
+		{
+			name: "429",
+			args: args{code: http.StatusTooManyRequests, format: "over %v requests", a: a},
+			want: &HTTPError{statusCode: http.StatusTooManyRequests, description: "over 9000 requests"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,16 +93,18 @@ func TestStatusCode(t *testing.T) {
 	type args struct {
 		err error
 	}
+
 	tests := []struct {
 		name string
 		args args
 		want int
 	}{
-		{name: "nil", args: args{err: nil}, want: 200},
-		{name: "regular error", args: args{err: errors.New("any regular error")}, want: 500},
-		{name: "http error", args: args{err: New(404, "no such page")}, want: 404},
+		{name: "nil", args: args{err: nil}, want: http.StatusOK},
+		{name: "regular error", args: args{err: errors.New("any regular error")}, want: http.StatusInternalServerError},
+		{name: "http error", args: args{err: New(http.StatusNotFound, "no such page")}, want: http.StatusNotFound},
 		{name: "zero http error", args: args{err: New(0, "")}, want: 0},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := StatusCode(tt.args.err); got != tt.want {
@@ -100,6 +118,7 @@ func TestReasonPhrase(t *testing.T) {
 	type args struct {
 		err error
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -107,9 +126,10 @@ func TestReasonPhrase(t *testing.T) {
 	}{
 		{name: "nil", args: args{err: nil}, want: "OK"},
 		{name: "regular error", args: args{err: errors.New("any regular error")}, want: "Internal Server Error"},
-		{name: "http error", args: args{err: New(404, "no such page")}, want: "Not Found"},
+		{name: "http error", args: args{err: New(http.StatusNotFound, "no such page")}, want: "Not Found"},
 		{name: "zero http error", args: args{err: New(0, "")}, want: ""},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ReasonPhrase(tt.args.err); got != tt.want {
