@@ -18,7 +18,6 @@ package httperror
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -65,27 +64,20 @@ func ReasonPhrase(err error) string {
 // {
 // 		"message": "error writing to DB"
 // }
-// Write does not otherwise end the request; the caller should ensure no further writes are done to w.
-//
 // In case the status code is 500 (Internal Server Error), the message will always be "Internal Server Error".
-// In addition, a log line with the correlation ID and the error details will be produced.
-//
-// correlationID is variadic for backward compatibility.
-func Write(w http.ResponseWriter, err error, correlationID ...string) {
+// Write does not end the request; the caller should ensure no further writes are done to w.
+func Write(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 
-	code, message := StatusCode(err), err.Error()
+	code := StatusCode(err)
 	w.WriteHeader(code)
 
+	var message string
 	if code == http.StatusInternalServerError {
-		var id string
-		if len(correlationID) > 0 {
-			id = correlationID[0]
-		}
-
-		log.Printf("[%s] Error: %s", id, message)
 		message = http.StatusText(code)
+	} else {
+		message = err.Error()
 	}
 
 	_ = json.NewEncoder(w).Encode(struct {
