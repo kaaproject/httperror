@@ -29,6 +29,10 @@ type HTTPError struct {
 
 // Error function transforms HTTPError into a human-readable string.
 func (p *HTTPError) Error() string {
+	if p == nil {
+		return ""
+	}
+
 	return p.description
 }
 
@@ -54,8 +58,8 @@ func StatusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-// ReasonPhrase is a convenience function for extracting HTTP Reason Phrase from error types.
-func ReasonPhrase(err error) string {
+// StatusText is a convenience function for extracting HTTP status text from error types.
+func StatusText(err error) string {
 	return http.StatusText(StatusCode(err))
 }
 
