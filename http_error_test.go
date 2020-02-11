@@ -132,8 +132,8 @@ func TestReasonPhrase(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ReasonPhrase(tt.args.err); got != tt.want {
-				t.Errorf("ReasonPhrase() = %v, want %v", got, tt.want)
+			if got := StatusText(tt.args.err); got != tt.want {
+				t.Errorf("StatusText() = %v, want %v", got, tt.want)
 			}
 		})
 	}
