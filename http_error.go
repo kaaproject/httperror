@@ -57,7 +57,7 @@ func StatusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-// StatusText is a convenience function for extracting HTTP Reason Phrase from error types.
+// StatusText is a convenience function for extracting HTTP status text from error types.
 func StatusText(err error) string {
 	return http.StatusText(StatusCode(err))
 }
