@@ -32,6 +32,7 @@ func (p *HTTPError) Error() string {
 	if p == nil {
 		return ""
 	}
+
 	return p.description
 }
 
