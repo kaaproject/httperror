@@ -126,7 +126,7 @@ func TestReasonPhrase(t *testing.T) {
 	}{
 		{name: "nil", args: args{err: nil}, want: "OK"},
 		{name: "regular error", args: args{err: errors.New("any regular error")}, want: "Internal Server Error"},
-		{name: "http error", args: args{err: New(http.StatusNotFound, "no such page")}, want: "Not Found"},
+		{name: "http error", args: args{err: New(http.StatusNotFound, "no such page")}, want: "no such page"},
 		{name: "zero http error", args: args{err: New(0, "")}, want: ""},
 	}
 

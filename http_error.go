@@ -56,7 +56,15 @@ func StatusCode(err error) int {
 
 // ReasonPhrase is a convenience function for extracting HTTP Reason Phrase from error types.
 func ReasonPhrase(err error) string {
-	return http.StatusText(StatusCode(err))
+	if err == nil {
+		return http.StatusText(http.StatusOK)
+	}
+
+	if err, ok := err.(*HTTPError); ok {
+		return err.description
+	}
+
+	return http.StatusText(http.StatusInternalServerError)
 }
 
 // Write to the response writer a status code and a JSON-encoded message based on the provided error.
