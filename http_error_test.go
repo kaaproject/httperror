@@ -22,27 +22,37 @@ import (
 )
 
 func TestHTTPError_Error(t *testing.T) {
-	type fields struct {
-		statusCode  int
-		description string
-	}
-
 	tests := []struct {
-		name   string
-		fields fields
-		want   string
+		name  string
+		error *HTTPError
+		want  string
 	}{
-		{name: "200", fields: fields{statusCode: http.StatusOK, description: ""}, want: ""},
-		{name: "404", fields: fields{statusCode: http.StatusNotFound, description: "no such page"}, want: "no such page"},
+		{
+			name: "200",
+			error: &HTTPError{
+				statusCode:  http.StatusOK,
+				description: "",
+			},
+			want: "",
+		},
+		{
+			name: "404",
+			error: &HTTPError{
+				statusCode:  http.StatusNotFound,
+				description: "no such page",
+			},
+			want: "no such page",
+		},
+		{
+			name:  "nil",
+			error: nil,
+			want:  "",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &HTTPError{
-				statusCode:  tt.fields.statusCode,
-				description: tt.fields.description,
-			}
-			if got := p.Error(); got != tt.want {
+			if got := tt.error.Error(); got != tt.want {
 				t.Errorf("HTTPError.Error() = %v, want %v", got, tt.want)
 			}
 		})
