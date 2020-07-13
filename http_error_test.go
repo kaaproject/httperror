@@ -149,7 +149,7 @@ func TestReasonPhrase(t *testing.T) {
 	}
 }
 
-func TestEqualPhrase(t *testing.T) {
+func TestEqual(t *testing.T) {
 	type args struct {
 		err1, err2 error
 	}
