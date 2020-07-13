@@ -88,3 +88,17 @@ func Write(w http.ResponseWriter, err error) {
 		Message string `json:"message"`
 	}{Message: message})
 }
+
+// Equal compares the errors status codes and the errors conditions.
+func Equal(err1, err2 error) bool {
+	switch {
+	case err1 == nil && err2 == nil:
+		return true
+	case err1 == nil && err2 != nil:
+		return false
+	case err1 != nil && err2 == nil:
+		return false
+	default:
+		return StatusCode(err1) == StatusCode(err2) && err1.Error() == err2.Error()
+	}
+}

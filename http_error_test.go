@@ -148,3 +148,30 @@ func TestReasonPhrase(t *testing.T) {
 		})
 	}
 }
+
+func TestEqualPhrase(t *testing.T) {
+	type args struct {
+		err1, err2 error
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{name: "nil, nil", args: args{err1: nil, err2: nil}, want: true},
+		{name: "nil, err", args: args{err1: nil, err2: New(http.StatusNotFound, "no such page")}, want: false},
+		{name: "err, nil", args: args{err1: New(http.StatusNotFound, "no such page"), err2: nil}, want: false},
+		{name: "dif status", args: args{err1: New(http.StatusBadRequest, "no such page"), err2: New(http.StatusNotFound, "no such page")}, want: false},
+		{name: "dif description", args: args{err1: New(http.StatusNotFound, "no"), err2: New(http.StatusNotFound, "no such page")}, want: false},
+		{name: "equal", args: args{err1: New(http.StatusNotFound, "no such page"), err2: New(http.StatusNotFound, "no such page")}, want: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Equal(tt.args.err1, tt.args.err2); got != tt.want {
+				t.Errorf("StatusText() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
