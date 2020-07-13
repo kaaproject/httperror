@@ -89,7 +89,7 @@ func Write(w http.ResponseWriter, err error) {
 	}{Message: message})
 }
 
-// Equal compares the errors status codes and the errors conditions.
+// Equal compares error status codes and contents.
 func Equal(err1, err2 error) bool {
 	switch {
 	case err1 == nil && err2 == nil:
