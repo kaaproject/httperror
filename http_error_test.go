@@ -162,8 +162,8 @@ func TestEqualPhrase(t *testing.T) {
 		{name: "nil, nil", args: args{err1: nil, err2: nil}, want: true},
 		{name: "nil, err", args: args{err1: nil, err2: New(http.StatusNotFound, "no such page")}, want: false},
 		{name: "err, nil", args: args{err1: New(http.StatusNotFound, "no such page"), err2: nil}, want: false},
-		{name: "dif status", args: args{err1: New(http.StatusBadRequest, "no such page"), err2: New(http.StatusNotFound, "no such page")}, want: false},
-		{name: "dif description", args: args{err1: New(http.StatusNotFound, "no"), err2: New(http.StatusNotFound, "no such page")}, want: false},
+		{name: "diff status", args: args{err1: New(http.StatusBadRequest, "no such page"), err2: New(http.StatusNotFound, "no such page")}, want: false},
+		{name: "diff description", args: args{err1: New(http.StatusNotFound, "no"), err2: New(http.StatusNotFound, "no such page")}, want: false},
 		{name: "equal", args: args{err1: New(http.StatusNotFound, "no such page"), err2: New(http.StatusNotFound, "no such page")}, want: true},
 	}
 
