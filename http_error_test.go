@@ -16,6 +16,7 @@ package httperror
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"reflect"
 	"testing"
@@ -109,10 +110,31 @@ func TestStatusCode(t *testing.T) {
 		args args
 		want int
 	}{
-		{name: "nil", args: args{err: nil}, want: http.StatusOK},
-		{name: "regular error", args: args{err: errors.New("any regular error")}, want: http.StatusInternalServerError},
-		{name: "http error", args: args{err: New(http.StatusNotFound, "no such page")}, want: http.StatusNotFound},
-		{name: "zero http error", args: args{err: New(0, "")}, want: 0},
+		{
+			name: "nil",
+			args: args{err: nil},
+			want: http.StatusOK,
+		},
+		{
+			name: "regular error",
+			args: args{err: errors.New("any regular error")},
+			want: http.StatusInternalServerError,
+		},
+		{
+			name: "http error",
+			args: args{err: New(http.StatusNotFound, "no such page")},
+			want: http.StatusNotFound,
+		},
+		{
+			name: "wrapped http error",
+			args: args{err: fmt.Errorf("%w: wrapper error", New(http.StatusNotFound, "no such page"))},
+			want: http.StatusNotFound,
+		},
+		{
+			name: "zero http error",
+			args: args{err: New(0, "")},
+			want: 0,
+		},
 	}
 
 	for _, tt := range tests {
