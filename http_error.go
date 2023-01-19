@@ -17,6 +17,7 @@ package httperror
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -51,8 +52,9 @@ func StatusCode(err error) int {
 		return http.StatusOK
 	}
 
-	if err, ok := err.(*HTTPError); ok {
-		return err.statusCode
+	var httpError *HTTPError
+	if errors.As(err, &httpError) {
+		return httpError.statusCode
 	}
 
 	return http.StatusInternalServerError
